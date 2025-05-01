@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    @keyframes fade-in {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fade-in 0.8s ease-in-out;
+    }
+    .hidden-card {
+      display: none !important;
+    }
+    .filter-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 1.5rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      background-color: #e5e7eb;
+      color: #1a1a1a;
+      transition: all 0.3s;
+    }
+    .filter-btn:hover {
+      background-color: #d1d5db;
+    }
+    .active-filter {
+      background-color: #000 !important;
+      color: #fff !important;
+    }
+  </style>
+</head>
+<body class="bg-[#f9f6f1] text-[#1a1a1a]">
+
+  <!-- Sidebar -->
+  <div class="fixed top-0 left-0 h-full w-20 bg-[#fcefe6] flex flex-col items-center py-6 space-y-8 animate-fade-in">
+    <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Logo" class="w-12 h-12 mb-10" />
+    <button class="text-2xl mt-4 hover:scale-125 transition duration-300">🏠</button>
+    <button class="text-2xl hover:scale-125 transition duration-300">👜</button>
+    <button class="text-2xl hover:scale-125 transition duration-300">📚</button>
+    <button class="text-2xl hover:scale-125 transition duration-300">⚙️</button>
+    <button class="text-2xl hover:scale-125 transition duration-300">👤</button>
+  </div>
+
+  <!-- Main content -->
+  <div class="ml-20 p-8">
+    <h1 class="text-6xl font-bold mb-10 animate-fade-in">Invest in your portfolio</h1>
+
+    <!-- Category filter -->
+    <div class="flex gap-3 mb-12 overflow-x-auto" id="filterButtons">
+      <button onclick="filterCards('all', this)" class="filter-btn active-filter">
+        <img src="https://img.icons8.com/ios-filled/50/grid-2.png" class="w-6 h-6"/> All
+      </button>
+      <button onclick="filterCards('developer', this)" class="filter-btn">
+        <img src="https://img.icons8.com/color/48/laptop.png" class="w-6 h-6"/> Developer
+      </button>
+      <button onclick="filterCards('media', this)" class="filter-btn">
+        <img src="https://img.icons8.com/fluency/48/video.png" class="w-6 h-6"/> Media Training
+      </button>
+      <button onclick="filterCards('business', this)" class="filter-btn">
+        <img src="https://img.icons8.com/fluency/48/briefcase.png" class="w-6 h-6"/> Business
+      </button>
+      <button onclick="filterCards('interior', this)" class="filter-btn">
+        <img src="https://img.icons8.com/external-flatart-icons-flat-flatarticons/64/external-design-interior-design-flatart-icons-flat-flatarticons.png" class="w-6 h-6"/> Interior
+      </button>
+      <button onclick="filterCards('Web Designers', this)" class="filter-btn">
+        <img src="https://img.icons8.com/color/48/laptop.png" class="w-6 h-6"/> Web Designers
+      </button>
+    </div>
+
+    <!-- Portfolio Cards -->
+    <div id="cardContainer" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+
+      <!-- Developer Card -->
+      <div class="portfolio-card developer h-[480px] rounded-2xl overflow-hidden shadow-lg relative bg-black animate-fade-in"
+        data-title="CCNA 2020 200–125 Video Boot Camp"
+        data-rating="4.8"
+        data-students="9530"
+        data-template="t1"
+        data-image="image.png"
+        data-category="developer"
+        onclick="openDetails(this)">
+        <img src="image.png" class="absolute inset-0 w-full h-full object-cover opacity-150" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent p-6 flex flex-col justify-between text-white">
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-semibold bg-white text-black px-3 py-1 rounded-full">Developer</span>
+            <span class="bg-white text-black px-2 py-1 rounded-full text-sm font-medium">⭐ 4.8</span>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold mb-1">CCNA 2020 200–125 Video Boot Camp</h2>
+            <p class="text-sm">9,530 students</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Business Card -->
+      <div class="portfolio-card business h-[480px] rounded-2xl overflow-hidden shadow-lg relative bg-black animate-fade-in"
+        data-title="Powerful Business Writing"
+        data-rating="4.9"
+        data-students="1463"
+        data-image="https://source.unsplash.com/featured/?business"
+        data-category="business"
+        data-template="t0"
+        onclick="openDetails(this)">
+        <img src="https://source.unsplash.com/featured/?business" class="absolute inset-0 w-full h-full object-cover opacity-70" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent p-6 flex flex-col justify-between text-white">
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-semibold bg-white text-black px-3 py-1 rounded-full">Business</span>
+            <span class="bg-white text-black px-2 py-1 rounded-full text-sm font-medium">⭐ 4.9</span>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold mb-1">Powerful Business Writing</h2>
+            <p class="text-sm">1,463 students</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Media Training Card -->
+      <div class="portfolio-card media h-[480px] rounded-2xl overflow-hidden shadow-lg relative bg-black animate-fade-in"
+        data-title="Certified Six Sigma Yellow Belt"
+        data-rating="4.9"
+        data-students="6726"
+        data-image="https://source.unsplash.com/featured/?media,training"
+        data-category="media"
+        onclick="openDetails(this)">
+        <img src="https://source.unsplash.com/featured/?media,training" class="absolute inset-0 w-full h-full object-cover opacity-70" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent p-6 flex flex-col justify-between text-white">
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-semibold bg-white text-black px-3 py-1 rounded-full">Media Training</span>
+            <span class="bg-white text-black px-2 py-1 rounded-full text-sm font-medium">⭐ 4.9</span>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold mb-1">Certified Six Sigma Yellow Belt</h2>
+            <p class="text-sm">6,726 students</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interior Design Card -->
+      <div class="portfolio-card interior h-[480px] rounded-2xl overflow-hidden shadow-lg relative bg-black animate-fade-in"
+        data-title="How to Design a Room in 10 Steps"
+        data-rating="5.0"
+        data-students="8735"
+        data-image="https://source.unsplash.com/featured/?interior,design"
+        data-category="interior"
+        onclick="openDetails(this)">
+        <img src="https://source.unsplash.com/featured/?interior,design" class="absolute inset-0 w-full h-full object-cover opacity-70" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent p-6 flex flex-col justify-between text-white">
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-semibold bg-white text-black px-3 py-1 rounded-full">Interior</span>
+            <span class="bg-white text-black px-2 py-1 rounded-full text-sm font-medium">⭐ 5.0 <span class="text-yellow-300">Top 10</span></span>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold mb-1">How to Design a Room in 10 Steps</h2>
+            <p class="text-sm">8,735 students</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function filterCards(category, btn) {
+      const cards = document.querySelectorAll('.portfolio-card');
+      cards.forEach(card => {
+        if (category === 'all') {
+          card.classList.remove('hidden-card');
+        } else {
+          card.classList.toggle('hidden-card', !card.classList.contains(category));
+        }
+      });
+
+      const allButtons = document.querySelectorAll('.filter-btn');
+      allButtons.forEach(b => b.classList.remove('active-filter'));
+      btn.classList.add('active-filter');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelector(".filter-btn").classList.add("active-filter");
+    });
+
+    function openDetails(card) {
+      const title = encodeURIComponent(card.dataset.title);
+      const rating = card.dataset.rating;
+      const students = card.dataset.students;
+      const image = encodeURIComponent(card.dataset.image);
+      const category = card.dataset.category;
+      const templateno = card.dataset.template;
+    
+      const url = `details.html?category=${category}&title=${title}&rating=${rating}&students=${students}&image=${image}&template=${templateno}`;
+      window.location.href = url;
+    }    
+  </script>
+
+</body>
+</html>

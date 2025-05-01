@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio Q&A Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.5s ease-out;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-purple-100 min-h-screen flex items-center justify-center p-6">
+
+  <div id="qaContainer" class="bg-white shadow-2xl rounded-2xl p-8 max-w-2xl w-full animate-fadeIn">
+    <h1 class="text-3xl font-bold text-center text-blue-700 mb-8">🚀 Portfolio Q&A Builder</h1>
+
+    <div class="space-y-6">
+      <p id="question" class="text-lg font-semibold text-gray-800 min-h-[60px] transition-all duration-500"></p>
+
+      <input id="answerInput" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 hidden" placeholder="Your answer..." />
+      <textarea id="answerTextarea" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 hidden" rows="4"></textarea>
+      <select id="genderSelection" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 hidden">
+        <option value="">Select your gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Non-binary">Non-binary</option>
+        <option value="Prefer not to say">Prefer not to say</option>
+      </select>
+
+      <div class="text-center hidden" id="autoGenerateButton">
+        <button onclick="autoGenerateCurrentAnswer()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition mb-2">
+          ✨ Auto Generate
+        </button>
+      </div>
+
+      <div class="flex justify-between items-center">
+        <button onclick="prevQuestion()" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition">Back</button>
+        <div class="flex gap-2">
+          <button id="skipButton" onclick="skipQuestion()" class="hidden bg-yellow-400 text-white px-4 py-2 rounded hover:bg-yellow-500 transition">Skip</button>
+          <button onclick="nextQuestion()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 shadow transition-transform transform hover:scale-105 duration-300">Next</button>
+        </div>
+      </div>
+
+      <div class="text-center mt-6 hidden" id="autoGenerateSection">
+        <button onclick="generatePortfolio()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+          📄 Auto Generate Portfolio
+        </button>
+
+        <!-- Option 1: Preview Button -->
+        <div class="mt-4">
+          <button onclick="openPreview()" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition">
+            🔍 Open Preview
+          </button>
+        </div>
+
+        <!-- Option 2: Preview Anchor Link -->
+        <div class="mt-2">
+          <a id="templateLink" target="_blank" class="text-blue-600 underline hover:text-blue-800">
+            🔗 Open Preview via Link
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const category = (params.get("category") || "developer").toLowerCase();
+    const templateNo = params.get("template") || "t0";
+
+    const intros = {
+      developer: [
+        `Hi! I’m a frontend developer who enjoys turning complex problems into simple, beautiful, and intuitive designs. I specialize in JavaScript frameworks like React and Vue.`,
+        `I'm a backend developer who thrives on optimizing performance, scalability, and security. I work mainly with Python, Node.js, and PostgreSQL.`,
+        `I'm a developer with a strong IT and DevOps background. I manage CI/CD pipelines and use tools like Docker, Kubernetes, and AWS.`,
+        `I'm a passionate software developer with a degree in Computer Science and several academic and personal projects.`
+      ],
+      business: [
+        `I'm a detail-oriented business analyst with a knack for turning data into actionable insights. I use Excel, Power BI, and SQL.`,
+        `I’m a creative and data-driven marketing professional with a passion for campaigns and social media strategy using Google Ads and SEO.`,
+        `I’m a results-oriented sales executive with strong B2B and B2C experience, skilled in relationship building and closing deals.`,
+        `I’m a recent business graduate with knowledge in marketing, finance, and operations. I've interned at startups and led case competitions.`,
+        `I’m a business-minded entrepreneur with hands-on experience in running and scaling startups. I've done it all — marketing, ops, and support.`
+      ]
+    };
+
+    const sampleAnswers = {
+      specialty: ["Frontend Development", "Backend Engineering", "Full-stack Web Apps", "DevOps & Automation"],
+      goals: ["Build accessible web apps", "Contribute to open source", "Work at a top tech company", "Launch a startup"],
+      projectName: ["Task Manager", "Weather App", "E-Commerce Dashboard", "Portfolio Website"],
+      projectDesc: ["A responsive app for managing daily tasks with login and reminders.", "A sleek weather app using OpenWeatherMap API.", "An admin dashboard with charts and real-time analytics.", "A portfolio to showcase my web development work."],
+      projectTech: ["React, TailwindCSS, Node.js", "HTML, CSS, JS, OpenWeatherMap API", "Vue.js, Firebase, Chart.js", "Next.js, Vercel, GitHub Pages"],
+      projectChallenges: ["Integrating OAuth login was tricky.", "Responsive layout took trial and error.", "Data sync with backend needed optimization.", "Making Lighthouse scores above 90."],
+      skills: ["HTML, CSS, JavaScript, React, Node.js"],
+      experience: ["Interned at ABC Corp as a frontend developer.", "Worked at XYZ Inc building internal tools."]
+    };
+
+    const excludedAutoGenerateKeys = ["certifications", "education", "email", "linkedin", "github"];
+
+    const questions = [
+      { key: "name", question: "👤 What is your full name?" },
+      { key: "gender", question: "⚧️ What is your gender?", type: "select" },
+      { key: "intro", question: "🧠 Tell us about yourself.", type: "textarea" },
+      { key: "specialty", question: "🛠️ What do you specialize in?" },
+      { key: "goals", question: "🎯 What are your passions or career goals?", type: "textarea" },
+      { key: "projectName", question: "📁 Project Name?" },
+      { key: "projectDesc", question: "📝 Describe your project.", type: "textarea" },
+      { key: "projectTech", question: "💻 What tech stack did you use?" },
+      { key: "projectChallenges", question: "🤔 Challenges and solutions?", type: "textarea" },
+      { key: "projectLink", question: "🔗 Link to GitHub or demo?" },
+      { key: "skills", question: "🧩 List your skills (comma separated)." },
+      { key: "experience", question: "📌 Describe your work experience.", type: "textarea" },
+      { key: "certifications", question: "📚 Certifications or courses?", type: "textarea" },
+      { key: "education", question: "🎓 What is your education background?", type: "textarea" },
+      { key: "email", question: "📧 Your email address?" },
+      { key: "linkedin", question: "🔗 LinkedIn profile?" },
+      { key: "github", question: "🐙 GitHub profile?" }
+    ];
+
+    let currentIndex = 0;
+    let currentProject = {};
+    const answers = { projects: [] };
+
+    function showQuestion(index) {
+      const q = questions[index];
+      document.getElementById("question").textContent = q.question;
+
+      const input = document.getElementById("answerInput");
+      const textarea = document.getElementById("answerTextarea");
+      const select = document.getElementById("genderSelection");
+      const autoBtn = document.getElementById("autoGenerateButton");
+      const skipBtn = document.getElementById("skipButton");
+
+      input.classList.add("hidden");
+      textarea.classList.add("hidden");
+      select.classList.add("hidden");
+      autoBtn.classList.add("hidden");
+      skipBtn.classList.add("hidden");
+
+      if (q.type === "select") {
+        select.classList.remove("hidden");
+        select.value = answers[q.key] || "";
+      } else if (q.type === "textarea") {
+        textarea.classList.remove("hidden");
+        textarea.value = q.key.startsWith("project") ? currentProject[q.key] || "" : answers[q.key] || "";
+      } else {
+        input.classList.remove("hidden");
+        input.value = q.key.startsWith("project") ? currentProject[q.key] || "" : answers[q.key] || "";
+      }
+
+      if (!excludedAutoGenerateKeys.includes(q.key) && index > 1) autoBtn.classList.remove("hidden");
+      if (index > 1) skipBtn.classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+      const q = questions[currentIndex];
+      let value;
+
+      if (q.type === "select") value = document.getElementById("genderSelection").value;
+      else if (q.type === "textarea") value = document.getElementById("answerTextarea").value.trim();
+      else value = document.getElementById("answerInput").value.trim();
+
+      if (!value) return alert("Please answer the question.");
+
+      if (q.key.startsWith("project")) {
+        currentProject[q.key] = value;
+        if (q.key === "projectLink") {
+          answers.projects.push({ ...currentProject });
+          currentProject = {};
+        }
+      } else {
+        answers[q.key] = value;
+      }
+
+      currentIndex++;
+      if (currentIndex < questions.length) {
+        showQuestion(currentIndex);
+      } else {
+        localStorage.setItem("portfolioQandA", JSON.stringify(answers));
+        document.getElementById("autoGenerateSection").classList.remove("hidden");
+        document.getElementById("question").textContent = "✅ All questions completed. You can now generate your portfolio.";
+        document.getElementById("answerInput").classList.add("hidden");
+        document.getElementById("answerTextarea").classList.add("hidden");
+        document.getElementById("genderSelection").classList.add("hidden");
+        document.getElementById("autoGenerateButton").classList.add("hidden");
+        document.getElementById("skipButton").classList.add("hidden");
+
+        // update preview link dynamically
+        document.getElementById("templateLink").href = `preview.html?category=${encodeURIComponent(category)}&template=${encodeURIComponent(templateNo)}`;
+      }
+    }
+
+    function prevQuestion() {
+      if (currentIndex <= 0) return;
+      currentIndex--;
+
+      const q = questions[currentIndex];
+
+      if (q.key === "projectLink" && answers.projects.length > 0) {
+        currentProject = answers.projects.pop();
+      }
+
+      showQuestion(currentIndex);
+    }
+
+    function skipQuestion() {
+      const q = questions[currentIndex];
+
+      if (q.key.startsWith("project")) {
+        currentProject[q.key] = "";
+        if (q.key === "projectLink") {
+          answers.projects.push({ ...currentProject });
+          currentProject = {};
+        }
+      } else {
+        answers[q.key] = "";
+      }
+
+      currentIndex++;
+      if (currentIndex < questions.length) {
+        showQuestion(currentIndex);
+      } else {
+        localStorage.setItem("portfolioQandA", JSON.stringify(answers));
+        document.getElementById("autoGenerateSection").classList.remove("hidden");
+        document.getElementById("question").textContent = "✅ All questions completed. You can now generate your portfolio.";
+        document.getElementById("answerInput").classList.add("hidden");
+        document.getElementById("answerTextarea").classList.add("hidden");
+        document.getElementById("genderSelection").classList.add("hidden");
+        document.getElementById("autoGenerateButton").classList.add("hidden");
+        document.getElementById("skipButton").classList.add("hidden");
+
+        // update preview link dynamically
+        document.getElementById("templateLink").href = `preview.html?category=${encodeURIComponent(category)}&template=${encodeURIComponent(templateNo)}`;
+      }
+    }
+
+    function autoGenerateCurrentAnswer() {
+      const q = questions[currentIndex];
+      const textarea = document.getElementById("answerTextarea");
+      const input = document.getElementById("answerInput");
+
+      let value = "";
+
+      if (q.key === "intro") {
+        const categoryIntros = intros[category] || intros["developer"];
+        value = categoryIntros[Math.floor(Math.random() * categoryIntros.length)];
+        textarea.value = value;
+      } else if (sampleAnswers[q.key]) {
+        value = sampleAnswers[q.key][Math.floor(Math.random() * sampleAnswers[q.key].length)];
+        if (q.type === "textarea") textarea.value = value;
+        else input.value = value;
+      }
+    }
+
+    function generatePortfolio() {
+      localStorage.setItem("portfolioQandA", JSON.stringify(answers));
+      console.log("Portfolio data saved:", answers);
+      window.open(`preview.html?template=${encodeURIComponent(templateNo)}`, "_blank");
+    }
+
+    function openPreview() {
+      window.open(`preview.html?category=${encodeURIComponent(category)}&template=${encodeURIComponent(templateNo)}`, "_blank");
+    }
+
+    window.onload = () => {
+      showQuestion(currentIndex);
+    };
+  </script>
+</body>
+</html>

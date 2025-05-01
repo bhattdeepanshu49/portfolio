@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Generated Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <style>
+    html[data-theme='dark'] {
+      --bg: #0f172a;
+      --fg: #f8fafc;
+    }
+    html[data-theme='light'] {
+      --bg: #f9fafb;
+      --fg: #1e293b;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      transition: background-color 0.4s ease, color 0.4s ease;
+    }
+    #resizer {
+      width: 6px;
+      cursor: col-resize;
+      background-color: rgba(100, 116, 139, 0.2);
+    }
+    #resizer:hover {
+      background-color: rgba(100, 116, 139, 0.5);
+    }
+  </style>
+</head>
+<body class="font-inter min-h-screen p-6">
+  <header class="flex justify-between items-center mb-5 sticky top-0 bg-[var(--bg)] z-10 py-2">
+    <h1 class="text-3xl font-bold text-indigo-600 tracking-tight">🚀 Portfolio Generator</h1>
+    <div class="flex items-center gap-3">
+      <button id="themeToggle" class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-sm dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">🌗 Theme</button>
+      <button id="downloadBtn" class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 shadow">⬇️ Download</button>
+    </div>
+  </header>
+
+  <div id="resizableContainer" class="flex h-[85vh] rounded-2xl overflow-hidden border shadow-2xl bg-white/50 dark:bg-gray-800/50">
+    <div id="leftPanel" class="p-4 w-1/2 overflow-auto relative bg-gray-950 text-white">
+      <h2 class="text-lg font-semibold mb-3 text-gray-300">HTML Code</h2>
+      <pre id="codeView" class="language-html text-sm whitespace-pre-wrap font-mono outline-none min-h-full" contenteditable="true"></pre>
+      <button id="copyBtn" class="absolute top-3 right-3 text-xs bg-gray-700 px-3 py-1 rounded hover:bg-gray-600">📋 Copy</button>
+    </div>
+
+    <div id="resizer"></div>
+
+    <div id="rightPanel" class="p-4 w-1/2 overflow-hidden bg-white dark:bg-gray-900">
+      <h2 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300">Live Preview</h2>
+      <iframe id="previewFrame" class="w-full h-full border rounded-lg shadow-inner" sandbox="allow-same-origin allow-scripts"></iframe>
+    </div>
+  </div>
+
+  <script>
+    const codeView = document.getElementById("codeView");
+    const previewFrame = document.getElementById("previewFrame");
+    const themeToggle = document.getElementById("themeToggle");
+
+    const savedTheme = localStorage.getItem("theme") || "light";
+    document.documentElement.dataset.theme = savedTheme;
+
+    themeToggle.addEventListener("click", () => {
+      const current = document.documentElement.dataset.theme;
+      const newTheme = current === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = newTheme;
+      localStorage.setItem("theme", newTheme);
+    });
+
+    const data = JSON.parse(localStorage.getItem("portfolioQandA") || "{}");
+    const templateName = new URLSearchParams(window.location.search).get("template") || "t1";
+    const templateFile = `${templateName}.html`;
+
+    const backendURL = "http://localhost:5500/renderWithGemini"; // ✅ Updated to your working server
+
+    fetch(templateFile)
+      .then(res => {
+        if (!res.ok) throw new Error("Template file not found");
+        return res.text();
+      })
+      .then(template => {
+        return fetch(backendURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ template, data })
+        });
+      })
+      .then(res => res.text())
+      .then(rendered => {
+        codeView.textContent = rendered;
+        previewFrame.srcdoc = rendered;
+        hljs.highlightElement(codeView);
+        localStorage.setItem("portfolioGenerated", rendered);
+      })
+      .catch(err => {
+        codeView.textContent = "<!-- Error rendering portfolio -->";
+        previewFrame.srcdoc = "<h1 style='color:red;'>Render failed</h1>";
+        console.error("❌ Fetch failed:", err);
+      });
+
+    // Debounced input update for iframe + save
+    let updateTimeout;
+    codeView.addEventListener("input", () => {
+      clearTimeout(updateTimeout);
+      updateTimeout = setTimeout(() => {
+        const html = codeView.textContent;
+        if (previewFrame.srcdoc !== html) {
+          previewFrame.srcdoc = html;
+          localStorage.setItem("portfolioGenerated", html);
+        }
+      }, 300);
+    });
+
+    // Load saved version if present
+    if (localStorage.getItem("portfolioGenerated")) {
+      const saved = localStorage.getItem("portfolioGenerated");
+      codeView.textContent = saved;
+      previewFrame.srcdoc = saved;
+    }
+
+    // Resizable layout
+    const resizer = document.getElementById("resizer");
+    const leftPanel = document.getElementById("leftPanel");
+    const rightPanel = document.getElementById("rightPanel");
+    let isDragging = false;
+
+    resizer.addEventListener("mousedown", () => {
+      isDragging = true;
+      document.body.style.cursor = "col-resize";
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      const container = document.getElementById("resizableContainer");
+      const totalWidth = container.offsetWidth;
+      const leftWidth = e.clientX - container.offsetLeft;
+      leftPanel.style.width = `${leftWidth}px`;
+      rightPanel.style.width = `${totalWidth - leftWidth - resizer.offsetWidth}px`;
+    });
+
+    window.addEventListener("mouseup", () => {
+      isDragging = false;
+      document.body.style.cursor = "default";
+    });
+
+    // Clipboard copy
+    document.getElementById("copyBtn").addEventListener("click", () => {
+      navigator.clipboard.writeText(codeView.textContent)
+        .then(() => alert("Copied to clipboard!"))
+        .catch(() => alert("Copy failed."));
+    });
+
+    // Safe inline download
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+      const code = codeView.textContent;
+      const blob = new Blob([code], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "portfolio.html";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>

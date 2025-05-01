@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio Detail</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pop {
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop { animation: pop 0.5s ease-out; }
+  </style>
+</head>
+<body class="bg-[#f9f6f1] text-[#1a1a1a] font-sans min-h-screen p-8">
+
+  <div class="max-w-6xl mx-auto bg-white shadow-2xl rounded-xl overflow-hidden grid grid-cols-1 md:grid-cols-3 gap-6 p-6 animate-pop">
+    <div class="md:col-span-2 space-y-6">
+      <h1 id="portfolioTitle" class="text-4xl font-extrabold text-[#222] tracking-tight"></h1>
+      <img id="portfolioImage" class="w-full h-[520px] object-cover rounded-xl border-2 border-gray-200 shadow-md transition-transform duration-300 hover:scale-105"/>
+
+      <!-- Open Template Button -->
+      <div class="mt-4">
+        <a id="templateLink" class="bg-blue-600 text-white px-6 py-3 rounded-full text-lg font-semibold shadow-lg hover:bg-blue-700 transition-all duration-300">
+          🚀 Open Template
+        </a>
+      </div>
+
+      <a href="index.html" class="inline-block mt-6 text-blue-600 hover:underline">&larr; Back to Portfolio</a>
+    </div>
+
+    <div class="bg-[#f2f2f2] rounded-xl p-6 space-y-4 shadow-md">
+      <h2 class="text-2xl font-bold text-[#333]">Details</h2>
+      <ul class="text-base space-y-2 text-[#444]">
+        <li><strong>Category:</strong> <span id="portfolioCategory">Web Development</span></li>
+        <li><strong>Year:</strong> 2025</li>
+        <li><strong>Status:</strong> Completed</li>
+        <li><strong>Tools:</strong> HTML, CSS, JavaScript</li>
+        <li><strong>Template No:</strong> <span id="templateNo">T0</span></li>
+
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const title = decodeURIComponent(params.get("title") || "Project Title");
+    const image = decodeURIComponent(params.get("image") || "img/default.png");
+    const category = decodeURIComponent(params.get("category") || "Web Development");
+    const templateno = decodeURIComponent(params.get("template") || "t0");
+
+    document.getElementById("portfolioTitle").textContent = title;
+
+    console.log("Image URL:", image);
+    const img = document.getElementById("portfolioImage");
+    img.src = image;
+
+    document.getElementById("portfolioCategory").textContent = category;
+    document.getElementById("templateNo").textContent = templateno;
+
+    document.getElementById("templateLink").href = `template.html?category=${encodeURIComponent(category)}&template=${encodeURIComponent(templateno)}`;
+  </script>
+
+</body>
+</html>

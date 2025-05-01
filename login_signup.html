@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login / Signup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-gray-100 font-sans p-4">
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-xl p-6">
+    <h2 class="text-2xl font-bold text-indigo-600 mb-6 text-center">🚀 Portfolio Access</h2>
+
+    <!-- Tabs -->
+    <div class="flex space-x-2 mb-4">
+      <button id="loginTab" class="flex-1 py-2 text-center bg-indigo-600 text-white rounded-lg font-medium">Login</button>
+      <button id="signupTab" class="flex-1 py-2 text-center bg-gray-200 rounded-lg font-medium">Signup</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <label class="block text-sm mb-1">Email</label>
+        <input type="email" class="w-full px-3 py-2 border rounded-lg" required>
+      </div>
+      <div>
+        <label class="block text-sm mb-1">Password</label>
+        <input type="password" class="w-full px-3 py-2 border rounded-lg" required>
+      </div>
+      <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition">Login</button>
+
+      <div class="flex items-center my-4">
+        <div class="flex-grow h-px bg-gray-300"></div>
+        <span class="mx-2 text-sm text-gray-500">or</span>
+        <div class="flex-grow h-px bg-gray-300"></div>
+      </div>
+
+      <button type="button" class="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="h-5 w-5" alt="Google" />
+        Continue with Google
+      </button>
+      <button type="button" class="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition">
+        <img src="https://www.svgrepo.com/show/452260/twitter.svg" class="h-5 w-5" alt="Twitter" />
+        Continue with X
+      </button>
+    </form>
+
+    <!-- Signup Form -->
+    <form id="signupForm" class="space-y-4 hidden">
+      <div>
+        <label class="block text-sm mb-1">Name</label>
+        <input type="text" class="w-full px-3 py-2 border rounded-lg" required>
+      </div>
+      <div>
+        <label class="block text-sm mb-1">Email</label>
+        <input type="email" class="w-full px-3 py-2 border rounded-lg" required>
+      </div>
+      <div>
+        <label class="block text-sm mb-1">Password</label>
+        <input type="password" class="w-full px-3 py-2 border rounded-lg" required>
+      </div>
+      <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition">Signup</button>
+
+      <div class="flex items-center my-4">
+        <div class="flex-grow h-px bg-gray-300"></div>
+        <span class="mx-2 text-sm text-gray-500">or</span>
+        <div class="flex-grow h-px bg-gray-300"></div>
+      </div>
+
+      <button type="button" class="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="h-5 w-5" alt="Google" />
+        Continue with Google
+      </button>
+      <button type="button" class="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition">
+        <img src="https://www.svgrepo.com/show/452260/twitter.svg" class="h-5 w-5" alt="Twitter" />
+        Continue with X
+      </button>
+    </form>
+  </div>
+
+  <script>
+    const loginTab = document.getElementById("loginTab");
+    const signupTab = document.getElementById("signupTab");
+    const loginForm = document.getElementById("loginForm");
+    const signupForm = document.getElementById("signupForm");
+
+    loginTab.addEventListener("click", () => {
+      loginForm.classList.remove("hidden");
+      signupForm.classList.add("hidden");
+      loginTab.classList.add("bg-indigo-600", "text-white");
+      signupTab.classList.remove("bg-indigo-600", "text-white");
+      signupTab.classList.add("bg-gray-200");
+    });
+
+    signupTab.addEventListener("click", () => {
+      loginForm.classList.add("hidden");
+      signupForm.classList.remove("hidden");
+      signupTab.classList.add("bg-indigo-600", "text-white");
+      loginTab.classList.remove("bg-indigo-600", "text-white");
+      loginTab.classList.add("bg-gray-200");
+    });
+  </script>
+</body>
+</html>
