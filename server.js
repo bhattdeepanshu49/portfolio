@@ -22,7 +22,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY, {
 });
 
 const model = genAI.getGenerativeModel({
-  model: "gemini-1.0-pro",
+  model: "gemini-1.5-flash",
   generationConfig: {
     temperature: 0.7,
     topP: 0.8,
@@ -56,18 +56,38 @@ Return ONLY the HTML code — no explanation, markdown, or code blocks.
 `;
 
     const result = await model.generateContent({
-      contents: [{ 
-        role: "system", 
-        content: prompt 
+      contents: [{
+        role: "user",
+        parts: [{ text: prompt }]
       }]
     });
 
-    const html = result.completions[0].content.trim();
-    res.send(html);
+    // Extract the generated HTML from the correct response structure
+    const response = result.response;
+    if (
+      response &&
+      response.candidates &&
+      response.candidates[0] &&
+      response.candidates[0].content &&
+      response.candidates[0].content.parts &&
+      response.candidates[0].content.parts[0] &&
+      typeof response.candidates[0].content.parts[0].text === "string"
+    ) {
+      const html = response.candidates[0].content.parts[0].text.trim();
+      res.send(html);
+    } else {
+      // If the response is blocked or missing, return an error
+      console.error("Gemini API returned an unexpected or blocked response:", response);
+      res.status(500).json({ error: "Rendering failed: Gemini API returned no usable content." });
+    }
   } catch (err) {
     console.error("Error during Gemini API rendering:", err);
     res.status(500).json({ error: "Rendering failed" });
   }
+});
+
+app.get("/", (req, res) => {
+  res.send("Server is running! Use POST /renderWithGemini to render HTML.");
 });
 
 const PORT = process.env.PORT || 5500;
