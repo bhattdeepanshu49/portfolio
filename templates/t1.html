@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{name}} - Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #64748b;
+            --accent: #10b981;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --text-light: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--background) 0%, var(--surface) 100%);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav ul li a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s ease;
+        }
+
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        .container {
+            padding: 120px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4rem;
+            min-height: 80vh;
+            padding: 2rem 0;
+        }
+
+        .hero-content {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .hero img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .hero img:hover {
+            transform: translateY(-10px);
+        }
+
+        .intro {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .name {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            backdrop-filter: blur(4px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+        }
+
+        section {
+            padding: 100px 5%;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+            margin-bottom: 3rem;
+            font-weight: 700;
+        }
+
+        .box {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 24px;
+            line-height: 1.8;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+        }
+
+        .project-item {
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .project-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .project-item h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .contact {
+            text-align: center;
+        }
+
+        .contact a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .contact a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .skill-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .skill-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                gap: 2rem;
+            }
+
+            .intro {
+                font-size: 2.5rem;
+            }
+
+            nav ul {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="left">{{name}}'s Portfolio</div>
+            <div class="right">
+                <ul>
+                    {{#intro}}<li><a href="#about">About</a></li>{{/intro}}
+                    {{#projects}}<li><a href="#projects">Projects</a></li>{{/projects}}
+                    {{#skills}}<li><a href="#skills">Skills</a></li>{{/skills}}
+                    {{#email}}<li><a href="#contact">Contact</a></li>{{/email}}
+                </ul>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <section class="hero">
+            <div class="hero-content" data-aos="fade-right">
+                <p class="intro">Hi, I'm <span class="name">{{name}}</span></p>
+                {{#specialty}}<p class="text-xl text-gray-300 mb-8">I am a <span id="element"></span>.</p>{{/specialty}}
+                <div class="flex gap-4">
+                    <a href="mailto:{{contact.email}}" class="btn btn-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                        Contact Me
+                    </a>
+                </div>
+            </div>
+            {{#profileImage}}
+            <div data-aos="fade-left">
+                <img src="{{.}}" alt="Profile Image" class="floating">  
+            </div>
+            {{/profileImage}}
+        </section>
+    </div>
+
+    {{#intro}}
+    <section id="about" data-aos="fade-up">
+        <h2 class="section-title">About Me</h2>
+        <div class="box">{{.}}</div>
+    </section>
+    {{/intro}}
+
+    {{#skills}}
+    <section id="skills" data-aos="fade-up">
+        <h2 class="section-title">Skills</h2>
+        <div class="box">
+            <div class="skills-list">
+                {{#.}}
+                <div class="skill-item">{{.}}</div>
+                {{/.}}
+            </div>
+        </div>
+    </section>
+    {{/skills}}
+
+    {{#projects}}
+    <section id="projects" data-aos="fade-up">
+        <h2 class="section-title">Projects</h2>
+        <div class="box">
+            {{#.}}
+            <div class="project-item">
+                <h3>{{projectName}}</h3>
+                {{#projectDesc}}<p class="mb-4">{{.}}</p>{{/projectDesc}}
+                {{#projectTech}}<p class="mb-4"><strong>Tech Stack:</strong> {{.}}</p>{{/projectTech}}
+                {{#projectChallenges}}<p class="mb-4"><strong>Challenges:</strong> {{.}}</p>{{/projectChallenges}}
+                {{#projectLink}}<a href="{{.}}" target="_blank" class="btn btn-primary">View Project</a>{{/projectLink}}
+            </div>
+            {{/.}}
+        </div>
+    </section>
+    {{/projects}}
+
+    {{#certifications}}
+    <section id="certificate" data-aos="fade-up">
+        <h2 class="section-title">Certifications</h2>
+        <div class="box">
+            <div class="skills-list">
+                {{#.}}
+                <div class="skill-item">
+                    {{name}} 
+                    <a href="{{link}}" target="_blank" class="text-primary hover:underline">View Certificate</a>
+                </div>
+                {{/.}}
+            </div>
+        </div>
+    </section>
+    {{/certifications}}
+
+    {{#email}}
+    <section id="contact" data-aos="fade-up">
+        <h2 class="section-title">Contact Me</h2>
+        <div class="box contact">
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="mailto:{{.}}" class="btn btn-primary">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    Email
+                </a>
+                {{#social.github}}
+                <a href="{{.}}" target="_blank" class="btn btn-secondary">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                    </svg>
+                    GitHub
+                </a>
+                {{/social.github}}
+                {{#social.linkedin}}
+                <a href="{{.}}" target="_blank" class="btn btn-secondary">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                    </svg>
+                    LinkedIn
+                </a>
+                {{/social.linkedin}}
+            </div>
+            {{#phone}}<p class="mt-4 text-lg text-center">📱 {{.}}</p>{{/phone}}
+        </div>
+    </section>
+    {{/email}}
+
+    {{#specialty}}
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    <script>
+        var typed = new Typed('#element', {
+            strings: ['{{.}}'],
+            typeSpeed: 50,
+            loop: true
+        });
+    </script>
+    {{/specialty}}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+    </script>
+</body>
+</html>

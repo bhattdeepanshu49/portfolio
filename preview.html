@@ -7,53 +7,164 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #f9fafb;
+      --fg: #1e293b;
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --secondary: #64748b;
+      --border: #e2e8f0;
+      --code-bg: #1e1e1e;
+      --panel-bg: #ffffff;
+    }
+
     html[data-theme='dark'] {
       --bg: #0f172a;
       --fg: #f8fafc;
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #94a3b8;
+      --border: #334155;
+      --code-bg: #1e1e1e;
+      --panel-bg: #1e293b;
     }
-    html[data-theme='light'] {
-      --bg: #f9fafb;
-      --fg: #1e293b;
-    }
+
     body {
       background-color: var(--bg);
       color: var(--fg);
+      font-family: 'Inter', sans-serif;
       transition: background-color 0.4s ease, color 0.4s ease;
     }
+
     #resizer {
-      width: 6px;
+      width: 4px;
       cursor: col-resize;
-      background-color: rgba(100, 116, 139, 0.2);
+      background-color: var(--border);
+      transition: background-color 0.2s ease;
     }
+
     #resizer:hover {
-      background-color: rgba(100, 116, 139, 0.5);
+      background-color: var(--primary);
+    }
+
+    .panel {
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .code-panel {
+      background-color: var(--code-bg);
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: var(--bg);
+      color: var(--fg);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--border);
+    }
+
+    .header {
+      backdrop-filter: blur(8px);
+      background-color: rgba(255, 255, 255, 0.8);
+      border-bottom: 1px solid var(--border);
+    }
+
+    html[data-theme='dark'] .header {
+      background-color: rgba(30, 41, 59, 0.8);
+    }
+
+    .preview-frame {
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      background-color: white;
+    }
+
+    .copy-btn {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .code-panel:hover .copy-btn {
+      opacity: 1;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-out;
     }
   </style>
 </head>
-<body class="font-inter min-h-screen p-6">
-  <header class="flex justify-between items-center mb-5 sticky top-0 bg-[var(--bg)] z-10 py-2">
-    <h1 class="text-3xl font-bold text-indigo-600 tracking-tight">🚀 Portfolio Generator</h1>
-    <div class="flex items-center gap-3">
-      <button id="themeToggle" class="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-sm dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600">🌗 Theme</button>
-      <button id="downloadBtn" class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 shadow">⬇️ Download</button>
+<body class="min-h-screen">
+  <header class="header sticky top-0 z-50 px-6 py-4 animate-fade-in">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-primary flex items-center gap-2">
+        <span class="text-3xl">🚀</span>
+        Portfolio Generator
+      </h1>
+      <div class="flex items-center gap-3">
+        <button id="themeToggle" class="btn btn-secondary">
+          <span class="text-xl">🌗</span>
+          <span class="hidden sm:inline">Toggle Theme</span>
+        </button>
+        <button id="downloadBtn" class="btn btn-primary">
+          <span class="text-xl">⬇️</span>
+          <span class="hidden sm:inline">Download</span>
+        </button>
+      </div>
     </div>
   </header>
 
-  <div id="resizableContainer" class="flex h-[85vh] rounded-2xl overflow-hidden border shadow-2xl bg-white/50 dark:bg-gray-800/50">
-    <div id="leftPanel" class="p-4 w-1/2 overflow-auto relative bg-gray-950 text-white">
-      <h2 class="text-lg font-semibold mb-3 text-gray-300">HTML Code</h2>
-      <pre id="codeView" class="language-html text-sm whitespace-pre-wrap font-mono outline-none min-h-full" contenteditable="true"></pre>
-      <button id="copyBtn" class="absolute top-3 right-3 text-xs bg-gray-700 px-3 py-1 rounded hover:bg-gray-600">📋 Copy</button>
-    </div>
+  <main class="p-6">
+    <div id="resizableContainer" class="flex h-[85vh] rounded-2xl overflow-hidden shadow-xl animate-fade-in">
+      <div id="leftPanel" class="panel code-panel p-4 w-1/2 overflow-auto relative">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-semibold text-gray-300">HTML Code</h2>
+          <button id="copyBtn" class="copy-btn btn btn-secondary text-sm">
+            <span>📋</span>
+            <span class="hidden sm:inline">Copy Code</span>
+          </button>
+        </div>
+        <pre id="codeView" class="language-html text-sm whitespace-pre-wrap font-mono outline-none min-h-full" contenteditable="true"></pre>
+      </div>
 
-    <div id="resizer"></div>
+      <div id="resizer"></div>
 
-    <div id="rightPanel" class="p-4 w-1/2 overflow-hidden bg-white dark:bg-gray-900">
-      <h2 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300">Live Preview</h2>
-      <iframe id="previewFrame" class="w-full h-full border rounded-lg shadow-inner" sandbox="allow-same-origin allow-scripts"></iframe>
+      <div id="rightPanel" class="panel p-4 w-1/2 overflow-hidden">
+        <h2 class="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">Live Preview</h2>
+        <iframe id="previewFrame" class="preview-frame w-full h-full" sandbox="allow-same-origin allow-scripts"></iframe>
+      </div>
     </div>
-  </div>
+  </main>
 
   <script>
     const codeView = document.getElementById("codeView");
@@ -70,26 +181,44 @@
       localStorage.setItem("theme", newTheme);
     });
 
-    const data = JSON.parse(localStorage.getItem("portfolioQandA") || "{}");
-    const templateName = new URLSearchParams(window.location.search).get("template") || "t1";
-    const templateFile = `${templateName}.html`;
+    async function generatePortfolio() {
+      try {
+        const portfolioData = localStorage.getItem('portfolioData');
+        if (!portfolioData) {
+          throw new Error('No portfolio data found');
+        }
 
-    const backendURL = "http://localhost:5500/renderWithGemini"; // ✅ Updated to your working server
+        const data = JSON.parse(portfolioData);
+        const params = new URLSearchParams(window.location.search);
+        const template = params.get('template') || 'templates/t1';
 
-    fetch(templateFile)
-      .then(res => {
-        if (!res.ok) throw new Error("Template file not found");
-        return res.text();
-      })
-      .then(template => {
+        const response = await fetch(template);
+        if (!response.ok) {
+          throw new Error('Template not found');
+        }
+
+        let templateContent = await response.text();
+
         return fetch(backendURL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ template, data })
         });
+      } catch (err) {
+        console.error("❌ Fetch failed:", err);
+        return null;
+      }
+    }
+
+    const backendURL = "http://localhost:5500/renderWithGemini"; // ✅ Updated to your working server
+
+    generatePortfolio()
+      .then(res => {
+        if (!res) return;
+        return res.text();
       })
-      .then(res => res.text())
       .then(rendered => {
+        if (!rendered) return;
         codeView.textContent = rendered;
         previewFrame.srcdoc = rendered;
         hljs.highlightElement(codeView);
@@ -98,7 +227,6 @@
       .catch(err => {
         codeView.textContent = "<!-- Error rendering portfolio -->";
         previewFrame.srcdoc = "<h1 style='color:red;'>Render failed</h1>";
-        console.error("❌ Fetch failed:", err);
       });
 
     // Debounced input update for iframe + save

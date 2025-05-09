@@ -3,274 +3,676 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Portfolio Q&A Builder</title>
+  <title>Portfolio Builder</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <style>
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --secondary: #64748b;
+      --accent: #10b981;
+      --background: #f8fafc;
+      --surface: #ffffff;
+      --text: #1e293b;
+      --text-light: #64748b;
+      --border: #e2e8f0;
     }
-    .animate-fadeIn {
-      animation: fadeIn 0.5s ease-out;
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--background);
+      color: var(--text);
+    }
+
+    .form-section {
+      background: var(--surface);
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--border);
+    }
+
+    .form-section:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-title {
+      color: var(--primary);
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .input-label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .form-textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--background);
+    }
+
+    .add-btn {
+      background: var(--accent);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .add-btn:hover {
+      background: #059669;
+      transform: translateY(-1px);
+    }
+
+    .remove-btn {
+      color: #ef4444;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .remove-btn:hover {
+      background: #fee2e2;
+    }
+
+    .skill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--background);
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      margin: 0.25rem;
+      font-size: 0.875rem;
+    }
+
+    .skill-tag button {
+      color: var(--text-light);
+      transition: all 0.3s ease;
+    }
+
+    .skill-tag button:hover {
+      color: #ef4444;
+    }
+
+    .preview-image {
+      max-width: 200px;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .drag-handle {
+      cursor: move;
+      color: var(--text-light);
+      padding: 0.5rem;
+    }
+
+    .drag-handle:hover {
+      color: var(--text);
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-purple-100 min-h-screen flex items-center justify-center p-6">
-
-  <div id="qaContainer" class="bg-white shadow-2xl rounded-2xl p-8 max-w-2xl w-full animate-fadeIn">
-    <h1 class="text-3xl font-bold text-center text-blue-700 mb-8">🚀 Portfolio Q&A Builder</h1>
-
-    <div class="space-y-6">
-      <p id="question" class="text-lg font-semibold text-gray-800 min-h-[60px] transition-all duration-500"></p>
-
-      <input id="answerInput" type="text" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 hidden" placeholder="Your answer..." />
-      <textarea id="answerTextarea" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 hidden" rows="4"></textarea>
-      <select id="genderSelection" class="w-full p-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 hidden">
-        <option value="">Select your gender</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-        <option value="Non-binary">Non-binary</option>
-        <option value="Prefer not to say">Prefer not to say</option>
-      </select>
-
-      <div class="text-center hidden" id="autoGenerateButton">
-        <button onclick="autoGenerateCurrentAnswer()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition mb-2">
-          ✨ Auto Generate
-        </button>
+<body class="min-h-screen p-6">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-center mb-8">Portfolio Builder</h1>
+    
+    <form id="portfolioForm" class="space-y-6">
+      <!-- Personal Information -->
+      <div class="form-section">
+        <h2 class="form-title">👤 Personal Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="input-group">
+            <label class="input-label">Full Name</label>
+            <input type="text" name="name" class="form-input" required>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Professional Title</label>
+            <input type="text" name="title" class="form-input" placeholder="e.g., Web Developer, UI/UX Designer" required>
+          </div>
+          <div class="input-group md:col-span-2">
+            <label class="input-label">Short Bio</label>
+            <textarea name="bio" class="form-input form-textarea" required></textarea>
+          </div>
+          <div class="input-group md:col-span-2">
+            <label class="input-label">Profile Photo URL</label>
+            <input type="url" name="profileImage" class="form-input" placeholder="https://example.com/photo.jpg">
+            <img id="profilePreview" class="preview-image hidden">
+          </div>
+        </div>
       </div>
 
-      <div class="flex justify-between items-center">
-        <button onclick="prevQuestion()" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition">Back</button>
+      <!-- Career Goals -->
+      <div class="form-section">
+        <h2 class="form-title">🎯 Career Goals</h2>
+        <div class="input-group">
+          <label class="input-label">Portfolio Objective</label>
+          <textarea name="objective" class="form-input form-textarea" placeholder="What is the primary goal of your portfolio? (e.g., get hired, showcase work, attract clients)" required></textarea>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="form-section">
+        <h2 class="form-title">🛠️ Skills & Technologies</h2>
+        <div class="input-group">
+          <label class="input-label">Add Skills</label>
         <div class="flex gap-2">
-          <button id="skipButton" onclick="skipQuestion()" class="hidden bg-yellow-400 text-white px-4 py-2 rounded hover:bg-yellow-500 transition">Skip</button>
-          <button onclick="nextQuestion()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 shadow transition-transform transform hover:scale-105 duration-300">Next</button>
+            <input type="text" id="skillInput" class="form-input" placeholder="e.g., JavaScript, React, Node.js">
+            <button type="button" class="add-btn" onclick="addSkill()">Add</button>
+          </div>
+          <div id="skillsList" class="mt-4 flex flex-wrap gap-2"></div>
         </div>
       </div>
 
-      <div class="text-center mt-6 hidden" id="autoGenerateSection">
-        <button onclick="generatePortfolio()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
-          📄 Auto Generate Portfolio
-        </button>
+      <!-- Projects -->
+      <div class="form-section">
+        <h2 class="form-title">📂 Projects</h2>
+        <div id="projectsList"></div>
+        <button type="button" class="add-btn mt-4" onclick="addProject()">Add Project</button>
+      </div>
 
-        <!-- Option 1: Preview Button -->
-        <div class="mt-4">
-          <button onclick="openPreview()" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition">
-            🔍 Open Preview
-          </button>
+      <!-- Work Experience -->
+      <div class="form-section">
+        <h2 class="form-title">🧪 Work Experience</h2>
+        <div id="experienceList"></div>
+        <button type="button" class="add-btn mt-4" onclick="addExperience()">Add Experience</button>
+      </div>
+
+      <!-- Education -->
+      <div class="form-section">
+        <h2 class="form-title">🎓 Education</h2>
+        <div id="educationList"></div>
+        <button type="button" class="add-btn mt-4" onclick="addEducation()">Add Education</button>
+      </div>
+
+      <!-- Certifications -->
+      <div class="form-section">
+        <h2 class="form-title">📜 Certifications</h2>
+        <div id="certificationsList"></div>
+        <button type="button" class="add-btn mt-4" onclick="addCertification()">Add Certification</button>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="form-section">
+        <h2 class="form-title">📱 Contact Information</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="input-group">
+            <label class="input-label">Email Address</label>
+            <input type="email" name="email" class="form-input" required>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Phone Number</label>
+            <input type="tel" name="phone" class="form-input">
+          </div>
+          <div class="input-group">
+            <label class="input-label">Location</label>
+            <input type="text" name="location" class="form-input" placeholder="City, Country">
+          </div>
+        </div>
         </div>
 
-        <!-- Option 2: Preview Anchor Link -->
-        <div class="mt-2">
-          <a id="templateLink" target="_blank" class="text-blue-600 underline hover:text-blue-800">
-            🔗 Open Preview via Link
-          </a>
+      <!-- Social Links -->
+      <div class="form-section">
+        <h2 class="form-title">🌐 Social Links</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="input-group">
+            <label class="input-label">GitHub</label>
+            <input type="url" name="github" class="form-input" placeholder="https://github.com/username">
+          </div>
+          <div class="input-group">
+            <label class="input-label">LinkedIn</label>
+            <input type="url" name="linkedin" class="form-input" placeholder="https://linkedin.com/in/username">
+          </div>
+          <div class="input-group">
+            <label class="input-label">Twitter</label>
+            <input type="url" name="twitter" class="form-input" placeholder="https://twitter.com/username">
+          </div>
+          <div class="input-group">
+            <label class="input-label">Personal Blog</label>
+            <input type="url" name="blog" class="form-input" placeholder="https://yourblog.com">
+          </div>
         </div>
       </div>
+
+      <div class="flex justify-end gap-4">
+        <button type="button" class="btn btn-secondary" onclick="previewPortfolio()">Preview</button>
+        <button type="submit" class="btn btn-primary">Generate Portfolio</button>
     </div>
+    </form>
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const category = (params.get("category") || "developer").toLowerCase();
-    const templateNo = params.get("template") || "t0";
+    // Store form data
+    let skills = [];
+    let projects = [];
+    let experience = [];
+    let education = [];
+    let certifications = [];
 
-    const intros = {
-      developer: [
-        `Hi! I’m a frontend developer who enjoys turning complex problems into simple, beautiful, and intuitive designs. I specialize in JavaScript frameworks like React and Vue.`,
-        `I'm a backend developer who thrives on optimizing performance, scalability, and security. I work mainly with Python, Node.js, and PostgreSQL.`,
-        `I'm a developer with a strong IT and DevOps background. I manage CI/CD pipelines and use tools like Docker, Kubernetes, and AWS.`,
-        `I'm a passionate software developer with a degree in Computer Science and several academic and personal projects.`
-      ],
-      business: [
-        `I'm a detail-oriented business analyst with a knack for turning data into actionable insights. I use Excel, Power BI, and SQL.`,
-        `I’m a creative and data-driven marketing professional with a passion for campaigns and social media strategy using Google Ads and SEO.`,
-        `I’m a results-oriented sales executive with strong B2B and B2C experience, skilled in relationship building and closing deals.`,
-        `I’m a recent business graduate with knowledge in marketing, finance, and operations. I've interned at startups and led case competitions.`,
-        `I’m a business-minded entrepreneur with hands-on experience in running and scaling startups. I've done it all — marketing, ops, and support.`
-      ]
-    };
-
-    const sampleAnswers = {
-      specialty: ["Frontend Development", "Backend Engineering", "Full-stack Web Apps", "DevOps & Automation"],
-      goals: ["Build accessible web apps", "Contribute to open source", "Work at a top tech company", "Launch a startup"],
-      projectName: ["Task Manager", "Weather App", "E-Commerce Dashboard", "Portfolio Website"],
-      projectDesc: ["A responsive app for managing daily tasks with login and reminders.", "A sleek weather app using OpenWeatherMap API.", "An admin dashboard with charts and real-time analytics.", "A portfolio to showcase my web development work."],
-      projectTech: ["React, TailwindCSS, Node.js", "HTML, CSS, JS, OpenWeatherMap API", "Vue.js, Firebase, Chart.js", "Next.js, Vercel, GitHub Pages"],
-      projectChallenges: ["Integrating OAuth login was tricky.", "Responsive layout took trial and error.", "Data sync with backend needed optimization.", "Making Lighthouse scores above 90."],
-      skills: ["HTML, CSS, JavaScript, React, Node.js"],
-      experience: ["Interned at ABC Corp as a frontend developer.", "Worked at XYZ Inc building internal tools."]
-    };
-
-    const excludedAutoGenerateKeys = ["certifications", "education", "email", "linkedin", "github"];
-
-    const questions = [
-      { key: "name", question: "👤 What is your full name?" },
-      { key: "gender", question: "⚧️ What is your gender?", type: "select" },
-      { key: "intro", question: "🧠 Tell us about yourself.", type: "textarea" },
-      { key: "specialty", question: "🛠️ What do you specialize in?" },
-      { key: "goals", question: "🎯 What are your passions or career goals?", type: "textarea" },
-      { key: "projectName", question: "📁 Project Name?" },
-      { key: "projectDesc", question: "📝 Describe your project.", type: "textarea" },
-      { key: "projectTech", question: "💻 What tech stack did you use?" },
-      { key: "projectChallenges", question: "🤔 Challenges and solutions?", type: "textarea" },
-      { key: "projectLink", question: "🔗 Link to GitHub or demo?" },
-      { key: "skills", question: "🧩 List your skills (comma separated)." },
-      { key: "experience", question: "📌 Describe your work experience.", type: "textarea" },
-      { key: "certifications", question: "📚 Certifications or courses?", type: "textarea" },
-      { key: "education", question: "🎓 What is your education background?", type: "textarea" },
-      { key: "email", question: "📧 Your email address?" },
-      { key: "linkedin", question: "🔗 LinkedIn profile?" },
-      { key: "github", question: "🐙 GitHub profile?" }
-    ];
-
-    let currentIndex = 0;
-    let currentProject = {};
-    const answers = { projects: [] };
-
-    function showQuestion(index) {
-      const q = questions[index];
-      document.getElementById("question").textContent = q.question;
-
-      const input = document.getElementById("answerInput");
-      const textarea = document.getElementById("answerTextarea");
-      const select = document.getElementById("genderSelection");
-      const autoBtn = document.getElementById("autoGenerateButton");
-      const skipBtn = document.getElementById("skipButton");
-
-      input.classList.add("hidden");
-      textarea.classList.add("hidden");
-      select.classList.add("hidden");
-      autoBtn.classList.add("hidden");
-      skipBtn.classList.add("hidden");
-
-      if (q.type === "select") {
-        select.classList.remove("hidden");
-        select.value = answers[q.key] || "";
-      } else if (q.type === "textarea") {
-        textarea.classList.remove("hidden");
-        textarea.value = q.key.startsWith("project") ? currentProject[q.key] || "" : answers[q.key] || "";
-      } else {
-        input.classList.remove("hidden");
-        input.value = q.key.startsWith("project") ? currentProject[q.key] || "" : answers[q.key] || "";
+    // Add skill
+    function addSkill() {
+      const input = document.getElementById('skillInput');
+      const skill = input.value.trim();
+      if (skill && !skills.includes(skill)) {
+        skills.push(skill);
+        updateSkillsList();
+        input.value = '';
       }
-
-      if (!excludedAutoGenerateKeys.includes(q.key) && index > 1) autoBtn.classList.remove("hidden");
-      if (index > 1) skipBtn.classList.remove("hidden");
     }
 
-    function nextQuestion() {
-      const q = questions[currentIndex];
-      let value;
+    // Update skills list
+    function updateSkillsList() {
+      const list = document.getElementById('skillsList');
+      list.innerHTML = skills.map(skill => `
+        <div class="skill-tag">
+          ${skill}
+          <button type="button" onclick="removeSkill('${skill}')">×</button>
+        </div>
+      `).join('');
+    }
 
-      if (q.type === "select") value = document.getElementById("genderSelection").value;
-      else if (q.type === "textarea") value = document.getElementById("answerTextarea").value.trim();
-      else value = document.getElementById("answerInput").value.trim();
+    // Remove skill
+    function removeSkill(skill) {
+      skills = skills.filter(s => s !== skill);
+      updateSkillsList();
+    }
 
-      if (!value) return alert("Please answer the question.");
+    // Add project
+    function addProject() {
+      const project = {
+        id: Date.now(),
+        name: '',
+        description: '',
+        technologies: '',
+        role: '',
+        github: '',
+        demo: '',
+        image: ''
+      };
+      projects.push(project);
+      updateProjectsList();
+    }
 
-      if (q.key.startsWith("project")) {
-        currentProject[q.key] = value;
-        if (q.key === "projectLink") {
-          answers.projects.push({ ...currentProject });
-          currentProject = {};
+    // Update projects list
+    function updateProjectsList() {
+      const list = document.getElementById('projectsList');
+      list.innerHTML = projects.map(project => `
+        <div class="form-section" data-id="${project.id}">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Project</h3>
+            <button type="button" class="remove-btn" onclick="removeProject(${project.id})">Remove</button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="input-group">
+              <label class="input-label">Project Name</label>
+              <input type="text" name="projectName" class="form-input" value="${project.name}" onchange="updateProject(${project.id}, 'name', this.value)">
+            </div>
+            <div class="input-group">
+              <label class="input-label">Technologies Used</label>
+              <input type="text" name="projectTech" class="form-input" value="${project.technologies}" onchange="updateProject(${project.id}, 'technologies', this.value)">
+            </div>
+            <div class="input-group md:col-span-2">
+              <label class="input-label">Description</label>
+              <textarea name="projectDesc" class="form-input form-textarea" onchange="updateProject(${project.id}, 'description', this.value)">${project.description}</textarea>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Role/Responsibility</label>
+              <input type="text" name="projectRole" class="form-input" value="${project.role}" onchange="updateProject(${project.id}, 'role', this.value)">
+            </div>
+            <div class="input-group">
+              <label class="input-label">GitHub Link</label>
+              <input type="url" name="projectGithub" class="form-input" value="${project.github}" onchange="updateProject(${project.id}, 'github', this.value)">
+            </div>
+            <div class="input-group">
+              <label class="input-label">Live Demo Link</label>
+              <input type="url" name="projectDemo" class="form-input" value="${project.demo}" onchange="updateProject(${project.id}, 'demo', this.value)">
+            </div>
+            <div class="input-group">
+              <label class="input-label">Project Image URL</label>
+              <input type="url" name="projectImage" class="form-input" value="${project.image}" onchange="updateProject(${project.id}, 'image', this.value)">
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Update project
+    function updateProject(id, field, value) {
+      const project = projects.find(p => p.id === id);
+      if (project) {
+        project[field] = value;
+      }
+    }
+
+    // Remove project
+    function removeProject(id) {
+      projects = projects.filter(p => p.id !== id);
+      updateProjectsList();
+    }
+
+    // Add experience
+    function addExperience() {
+      const exp = {
+        id: Date.now(),
+        title: '',
+        company: '',
+        duration: '',
+        responsibilities: ''
+      };
+      experience.push(exp);
+      updateExperienceList();
+    }
+
+    // Update experience list
+    function updateExperienceList() {
+      const list = document.getElementById('experienceList');
+      list.innerHTML = experience.map(exp => `
+        <div class="form-section" data-id="${exp.id}">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Work Experience</h3>
+            <button type="button" class="remove-btn" onclick="removeExperience(${exp.id})">Remove</button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="input-group">
+              <label class="input-label">Job Title</label>
+              <input type="text" name="jobTitle" class="form-input" value="${exp.title}" onchange="updateExperience(${exp.id}, 'title', this.value)">
+            </div>
+            <div class="input-group">
+              <label class="input-label">Company</label>
+              <input type="text" name="company" class="form-input" value="${exp.company}" onchange="updateExperience(${exp.id}, 'company', this.value)">
+            </div>
+            <div class="input-group">
+              <label class="input-label">Duration</label>
+              <input type="text" name="duration" class="form-input" value="${exp.duration}" onchange="updateExperience(${exp.id}, 'duration', this.value)">
+            </div>
+            <div class="input-group md:col-span-2">
+              <label class="input-label">Responsibilities</label>
+              <textarea name="responsibilities" class="form-input form-textarea" onchange="updateExperience(${exp.id}, 'responsibilities', this.value)">${exp.responsibilities}</textarea>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Update experience
+    function updateExperience(id, field, value) {
+      const exp = experience.find(e => e.id === id);
+      if (exp) {
+        exp[field] = value;
+      }
+    }
+
+    // Remove experience
+    function removeExperience(id) {
+      experience = experience.filter(e => e.id !== id);
+      updateExperienceList();
+    }
+
+    // Add education
+    function addEducation() {
+      const edu = {
+        id: Date.now(),
+        degree: '',
+        school: '',
+        year: ''
+      };
+      education.push(edu);
+      updateEducationList();
+    }
+
+    // Update education list
+    function updateEducationList() {
+      const list = document.getElementById('educationList');
+      list.innerHTML = education.map(edu => `
+        <div class="form-section" data-id="${edu.id}">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Education</h3>
+            <button type="button" class="remove-btn" onclick="removeEducation(${edu.id})">Remove</button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="input-group">
+              <label class="input-label">Degree/Certificate</label>
+              <input type="text" name="degree" class="form-input" value="${edu.degree}" onchange="updateEducation(${edu.id}, 'degree', this.value)">
+            </div>
+            <div class="input-group">
+              <label class="input-label">School/Institute</label>
+              <input type="text" name="school" class="form-input" value="${edu.school}" onchange="updateEducation(${edu.id}, 'school', this.value)">
+            </div>
+            <div class="input-group">
+              <label class="input-label">Year of Graduation</label>
+              <input type="text" name="year" class="form-input" value="${edu.year}" onchange="updateEducation(${edu.id}, 'year', this.value)">
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Update education
+    function updateEducation(id, field, value) {
+      const edu = education.find(e => e.id === id);
+      if (edu) {
+        edu[field] = value;
+      }
+    }
+
+    // Remove education
+    function removeEducation(id) {
+      education = education.filter(e => e.id !== id);
+      updateEducationList();
+    }
+
+    // Add certification
+    function addCertification() {
+      const cert = {
+        id: Date.now(),
+        name: '',
+        issuer: '',
+        date: '',
+        link: ''
+      };
+      certifications.push(cert);
+      updateCertificationsList();
+    }
+
+    // Update certifications list
+    function updateCertificationsList() {
+      const list = document.getElementById('certificationsList');
+      list.innerHTML = certifications.map(cert => `
+        <div class="form-section" data-id="${cert.id}">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Certification</h3>
+            <button type="button" class="remove-btn" onclick="removeCertification(${cert.id})">Remove</button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="input-group">
+              <label class="input-label">Certificate Name</label>
+              <input type="text" name="certName" class="form-input" value="${cert.name}" onchange="updateCertification(${cert.id}, 'name', this.value)">
+            </div>
+            <div class="input-group">
+              <label class="input-label">Issuer</label>
+              <input type="text" name="issuer" class="form-input" value="${cert.issuer}" onchange="updateCertification(${cert.id}, 'issuer', this.value)">
+            </div>
+            <div class="input-group">
+              <label class="input-label">Date</label>
+              <input type="text" name="certDate" class="form-input" value="${cert.date}" onchange="updateCertification(${cert.id}, 'date', this.value)">
+            </div>
+            <div class="input-group">
+              <label class="input-label">Certificate Link</label>
+              <input type="url" name="certLink" class="form-input" value="${cert.link}" onchange="updateCertification(${cert.id}, 'link', this.value)">
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Update certification
+    function updateCertification(id, field, value) {
+      const cert = certifications.find(c => c.id === id);
+      if (cert) {
+        cert[field] = value;
+      }
+    }
+
+    // Remove certification
+    function removeCertification(id) {
+      certifications = certifications.filter(c => c.id !== id);
+      updateCertificationsList();
+    }
+
+    // Initialize the form
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add event listener for skill input
+      document.getElementById('skillInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addSkill();
         }
-      } else {
-        answers[q.key] = value;
+      });
+
+      // Load saved data if exists
+      const savedData = localStorage.getItem('portfolioData');
+      if (savedData) {
+        const data = JSON.parse(savedData);
+        skills = data.skills || [];
+        projects = data.projects || [];
+        experience = data.experience || [];
+        education = data.education || [];
+        certifications = data.certifications || [];
+
+        updateSkillsList();
+        updateProjectsList();
+        updateExperienceList();
+        updateEducationList();
+        updateCertificationsList();
       }
+    });
 
-      currentIndex++;
-      if (currentIndex < questions.length) {
-        showQuestion(currentIndex);
-      } else {
-        localStorage.setItem("portfolioQandA", JSON.stringify(answers));
-        document.getElementById("autoGenerateSection").classList.remove("hidden");
-        document.getElementById("question").textContent = "✅ All questions completed. You can now generate your portfolio.";
-        document.getElementById("answerInput").classList.add("hidden");
-        document.getElementById("answerTextarea").classList.add("hidden");
-        document.getElementById("genderSelection").classList.add("hidden");
-        document.getElementById("autoGenerateButton").classList.add("hidden");
-        document.getElementById("skipButton").classList.add("hidden");
-
-        // update preview link dynamically
-        document.getElementById("templateLink").href = `preview.html?category=${encodeURIComponent(category)}&template=${encodeURIComponent(templateNo)}`;
-      }
-    }
-
-    function prevQuestion() {
-      if (currentIndex <= 0) return;
-      currentIndex--;
-
-      const q = questions[currentIndex];
-
-      if (q.key === "projectLink" && answers.projects.length > 0) {
-        currentProject = answers.projects.pop();
-      }
-
-      showQuestion(currentIndex);
-    }
-
-    function skipQuestion() {
-      const q = questions[currentIndex];
-
-      if (q.key.startsWith("project")) {
-        currentProject[q.key] = "";
-        if (q.key === "projectLink") {
-          answers.projects.push({ ...currentProject });
-          currentProject = {};
+    // Form submission
+    document.getElementById('portfolioForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = {
+        name: this.name.value,
+        title: this.title.value,
+        bio: this.bio.value,
+        profileImage: this.profileImage.value,
+        objective: this.objective.value,
+        skills: skills,
+        projects: projects,
+        experience: experience,
+        education: education,
+        certifications: certifications,
+        contact: {
+          email: this.email.value,
+          phone: this.phone.value,
+          location: this.location.value
+        },
+        social: {
+          github: this.github.value,
+          linkedin: this.linkedin.value,
+          twitter: this.twitter.value,
+          blog: this.blog.value
         }
-      } else {
-        answers[q.key] = "";
-      }
+      };
 
-      currentIndex++;
-      if (currentIndex < questions.length) {
-        showQuestion(currentIndex);
-      } else {
-        localStorage.setItem("portfolioQandA", JSON.stringify(answers));
-        document.getElementById("autoGenerateSection").classList.remove("hidden");
-        document.getElementById("question").textContent = "✅ All questions completed. You can now generate your portfolio.";
-        document.getElementById("answerInput").classList.add("hidden");
-        document.getElementById("answerTextarea").classList.add("hidden");
-        document.getElementById("genderSelection").classList.add("hidden");
-        document.getElementById("autoGenerateButton").classList.add("hidden");
-        document.getElementById("skipButton").classList.add("hidden");
+      localStorage.setItem('portfolioData', JSON.stringify(formData));
+      window.location.href = 'preview.html?template=templates/t1';
+    });
 
-        // update preview link dynamically
-        document.getElementById("templateLink").href = `preview.html?category=${encodeURIComponent(category)}&template=${encodeURIComponent(templateNo)}`;
-      }
+    // Preview portfolio
+    function previewPortfolio() {
+      const formData = {
+        name: document.querySelector('input[name="name"]').value,
+        title: document.querySelector('input[name="title"]').value,
+        bio: document.querySelector('textarea[name="bio"]').value,
+        profileImage: document.querySelector('input[name="profileImage"]').value,
+        objective: document.querySelector('textarea[name="objective"]').value,
+        skills: skills,
+        projects: projects,
+        experience: experience,
+        education: education,
+        certifications: certifications,
+        contact: {
+          email: document.querySelector('input[name="email"]').value,
+          phone: document.querySelector('input[name="phone"]').value,
+          location: document.querySelector('input[name="location"]').value
+        },
+        social: {
+          github: document.querySelector('input[name="github"]').value,
+          linkedin: document.querySelector('input[name="linkedin"]').value,
+          twitter: document.querySelector('input[name="twitter"]').value,
+          blog: document.querySelector('input[name="blog"]').value
+        }
+      };
+
+      localStorage.setItem('portfolioData', JSON.stringify(formData));
+      window.open('preview.html?template=templates/t1', '_blank');
     }
-
-    function autoGenerateCurrentAnswer() {
-      const q = questions[currentIndex];
-      const textarea = document.getElementById("answerTextarea");
-      const input = document.getElementById("answerInput");
-
-      let value = "";
-
-      if (q.key === "intro") {
-        const categoryIntros = intros[category] || intros["developer"];
-        value = categoryIntros[Math.floor(Math.random() * categoryIntros.length)];
-        textarea.value = value;
-      } else if (sampleAnswers[q.key]) {
-        value = sampleAnswers[q.key][Math.floor(Math.random() * sampleAnswers[q.key].length)];
-        if (q.type === "textarea") textarea.value = value;
-        else input.value = value;
-      }
-    }
-
-    function generatePortfolio() {
-      localStorage.setItem("portfolioQandA", JSON.stringify(answers));
-      console.log("Portfolio data saved:", answers);
-      window.open(`preview.html?template=${encodeURIComponent(templateNo)}`, "_blank");
-    }
-
-    function openPreview() {
-      window.open(`preview.html?category=${encodeURIComponent(category)}&template=${encodeURIComponent(templateNo)}`, "_blank");
-    }
-
-    window.onload = () => {
-      showQuestion(currentIndex);
-    };
   </script>
 </body>
 </html>

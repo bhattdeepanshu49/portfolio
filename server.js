@@ -3,6 +3,8 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const path = require("path");
+const fs = require("fs");
 
 dotenv.config();
 
@@ -33,17 +35,21 @@ const model = genAI.getGenerativeModel({
 app.post("/renderWithGemini", async (req, res) => {
   try {
     const { template, data } = req.body;
-
     if (!template || !data) {
       return res.status(400).json({ error: "Missing template or data" });
     }
 
-    const prompt = `
-You are a helpful assistant that fills HTML templates using JSON data.
+    const templatePath = path.join(__dirname, template);
+    if (!fs.existsSync(templatePath)) {
+      return res.status(404).json({ error: "Template not found" });
+    }
 
+    const templateContent = fs.readFileSync(templatePath, "utf8");
+
+    const prompt = `
 Here is the HTML template (using {{mustache}} placeholders):
 \`\`\`html
-${template}
+${templateContent}
 \`\`\`
 
 And here is the data:
@@ -62,22 +68,12 @@ Return ONLY the HTML code — no explanation, markdown, or code blocks.
       }]
     });
 
-    // Extract the generated HTML from the correct response structure
     const response = result.response;
-    if (
-      response &&
-      response.candidates &&
-      response.candidates[0] &&
-      response.candidates[0].content &&
-      response.candidates[0].content.parts &&
-      response.candidates[0].content.parts[0] &&
-      typeof response.candidates[0].content.parts[0].text === "string"
-    ) {
-      const html = response.candidates[0].content.parts[0].text.trim();
+    if (response && response.text) {
+      const html = response.text.trim();
       res.send(html);
     } else {
-      // If the response is blocked or missing, return an error
-      console.error("Gemini API returned an unexpected or blocked response:", response);
+      console.error("Gemini API returned an unexpected response:", response);
       res.status(500).json({ error: "Rendering failed: Gemini API returned no usable content." });
     }
   } catch (err) {
@@ -92,5 +88,5 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 5500;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
